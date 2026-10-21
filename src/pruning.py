@@ -35,4 +35,3 @@ def effective_weight(weight: Tensor, mask: np.ndarray) -> Tensor:
 	"""
 	mask_array = validate_binary_mask(mask, weight.shape)
 	return weight * Tensor(mask_array)
-
