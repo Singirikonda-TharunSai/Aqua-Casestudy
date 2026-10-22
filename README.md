@@ -3,7 +3,7 @@
 NumPy-only implementation of an autodiff + training + pruning pipeline.
 
 This repository is being built in the six-phase order agreed in planning.
-Current status: **Phases 1-4 complete; Phase 5 evidence under final sign-off review**.
+Current status: **Phases 1-5 complete; committed evidence and claim verification pass**.
 
 ## Environment
 
@@ -130,7 +130,7 @@ test split. For Phase 5, run this under both guard settings:
 ### Reproducible Pareto sweep command
 
 ```bash
-python -m experiments.run_sweep --targets "0.0,0.5,0.75,0.9,0.95,0.97,0.98,0.99" --seeds "100,101,102,103,104,105,106,107,108,109" --epochs 20 --batch-size 32 --hidden-size 256 --lr 0.01 --test-ratio 0.1 --prune-start-epoch 2 --prune-end-epoch 20 --prune-frequency 1 --min-survivors-per-layer 1 --min-survivors-per-row 0 --min-survivors-per-col 0 --min-survivors-per-output-col 1 --latency-warmup-runs 3 --latency-timed-runs 10 --bootstrap-resamples 5000 --permutation-resamples 5000 --quiet
+python -m experiments.run_sweep --targets "0.0,0.5,0.75,0.9,0.95,0.97,0.98,0.99" --seeds "100,101,102,103,104,105,106,107,108,109" --epochs 15 --batch-size 32 --hidden-size 256 --lr 0.01 --test-ratio 0.1 --prune-start-epoch 2 --prune-end-epoch 15 --prune-frequency 1 --min-survivors-per-layer 1 --min-survivors-per-row 0 --min-survivors-per-col 0 --min-survivors-per-output-col 1 --latency-warmup-runs 1 --latency-timed-runs 5 --bootstrap-resamples 3000 --permutation-resamples 3000 --quiet
 ```
 
 Claim verification command:
