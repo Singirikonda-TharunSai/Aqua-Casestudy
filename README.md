@@ -2,7 +2,6 @@
 
 NumPy-only implementation of an autodiff + training + pruning pipeline.
 
-This repository is being built in the six-phase order agreed in planning.
 Current status: **Phases 1-5 complete; committed evidence and claim verification pass**.
 
 ## Environment
@@ -84,6 +83,28 @@ bottlenecks.
 - `tests/test_sparse_inference.py`: sparse-path equivalence and sparse-cost-accounting tests
 - `tests/test_phase5_sweep.py`: sweep pairing/statistics/schema helper tests
 
+## Phase 3 masked-optimizer usage
+
+```python
+import numpy as np
+from src.nn import MLP
+from src.optim import MaskedAdam
+
+rng = np.random.default_rng(0)
+model = MLP(in_features=64, hidden_sizes=[128], out_features=10, masked=True, rng=rng)
+optimizer = MaskedAdam(
+	masked_params=model.masked_parameters(),
+	dense_params=[layer.bias for layer in model.layers if layer.bias is not None],
+	lr=1e-2,
+)
+```
+
+`MaskedAdam` enforces:
+
+- inactive weights stay exactly zero,
+- per-element moments and age reset on prune/revive transitions,
+- `dL/dW_eff` remains accessible via `MaskedParameter.effective_position_grad`.
+
 ## Phase 4 self-pruning command
 
 ```bash
@@ -139,6 +160,7 @@ Claim verification command:
 python -m experiments.verify_claim
 ```
 
+The verifier checks the published claim against the committed CSV artifacts and summary.
 ### Committed Phase 5 artifacts
 
 - `experiments/results/phase5_pareto_raw.csv`
@@ -204,24 +226,5 @@ This claim is generated from committed artifacts and can be recomputed by:
 python -m experiments.verify_claim
 ```
 
-## Phase 3 masked-optimizer usage
+The verifier checks the published claim against the committed CSV artifacts and summary.
 
-```python
-import numpy as np
-from src.nn import MLP
-from src.optim import MaskedAdam
-
-rng = np.random.default_rng(0)
-model = MLP(in_features=64, hidden_sizes=[128], out_features=10, masked=True, rng=rng)
-optimizer = MaskedAdam(
-	masked_params=model.masked_parameters(),
-	dense_params=[layer.bias for layer in model.layers if layer.bias is not None],
-	lr=1e-2,
-)
-```
-
-`MaskedAdam` enforces:
-
-- inactive weights stay exactly zero,
-- per-element moments and age reset on prune/revive transitions,
-- `dL/dW_eff` remains accessible via `MaskedParameter.effective_position_grad`.
